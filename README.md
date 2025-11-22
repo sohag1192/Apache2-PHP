@@ -1,8 +1,7 @@
-Here’s a **polished, production‑ready README.md** for your `Apache2-PHP` repository. I’ve structured it with clear sections, branding, bilingual support, and professional formatting so it looks great on GitHub and is easy for others to follow.
+
+---
 
 
-
-```markdown
 # Apache2-PHP Installer & IP Viewer
 
 A lightweight shell script to install **Apache2 + PHP** on Ubuntu/Debian systems and deploy a PHP file (`ip.php`) that displays client IP, remote IP, and server IP information.  
@@ -77,6 +76,19 @@ This ensures Apache logs and PHP’s `$_SERVER['REMOTE_ADDR']` reflect the **rea
 
 ---
 
+## 🧹 Uninstallation
+
+To remove Apache2, PHP, and the deployed file, run:
+
+```bash
+chmod +x uninstall.sh
+./uninstall.sh
+```
+
+This will stop Apache2, remove packages, and clean up `/var/www/html/ip.php`.
+
+---
+
 ## 📜 License
 Distributed under the **MIT License**. See `LICENSE` for details.
 
@@ -110,12 +122,18 @@ chmod +x Apache2&Php.sh
 curl http://localhost/ip.php
 ```
 
----
+আনইন্সটল করতে:
 
+```bash
+chmod +x uninstall.sh
+./uninstall.sh
+```
+
+---
 ```
 
 ---
 
-This README is **ready to drop into your repo** — it highlights your role as maintainer, explains usage clearly, and adds bilingual instructions for Bangladeshi developers.  
+This README now covers **installation, usage, reverse proxy support, uninstallation, license, maintainer info, and Bangla instructions**.  
 
-👉 I can also design a **diagram (Apache ↔ Proxy ↔ Client flow)** or add **screenshots of sample output** to make the README visually compelling. Would you like me to add those enhancements?
+👉 I can also add a **diagram (Client ↔ Proxy ↔ Apache ↔ PHP)** or **screenshots of sample output** to make the README visually compelling. Would you like me to include those enhancements?
