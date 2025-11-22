@@ -4,7 +4,7 @@ Here’s a clean, ready‑to‑run version you can use directly on Ubuntu:
 
    ```bash
 
-wget https://raw.githubusercontent.com/sohag1192/Apache2-PHP/refs/heads/main/Apache2%26Php.sh
+wget https://raw.githubusercontent.com/sohag1192/Apache2-PHP/refs/heads/main/install.sh
    ```  
 ---
 
