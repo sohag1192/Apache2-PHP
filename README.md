@@ -1,4 +1,3 @@
-Perfect — I checked your repo script `Apache2&Php.sh`. It’s designed for **Ubuntu/Debian** systems to install Apache2 + PHP and deploy a PHP file that shows client IP, remote IP, and server IP.  
 
 Here’s a clean, ready‑to‑run version you can use directly on Ubuntu:
 
@@ -31,4 +30,3 @@ Real IP header: n/a
 
 ---
 
-👉 Do you want me to extend this installer so it **auto‑configures `mod_remoteip`** for reverse proxies (so Apache logs and PHP always show the *real* client IP instead of the proxy)?
