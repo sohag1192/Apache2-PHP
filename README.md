@@ -130,9 +130,9 @@ chmod +x uninstall.sh
 ```
 
 ---
-```
 
----
+
+
 
 This README now covers **installation, usage, reverse proxy support, uninstallation, license, maintainer info, and Bangla instructions**.  
 
