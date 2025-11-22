@@ -1,6 +1,6 @@
 Here’s a **polished, production‑ready README.md** for your `Apache2-PHP` repository. I’ve structured it with clear sections, branding, bilingual support, and professional formatting so it looks great on GitHub and is easy for others to follow.
 
----
+
 
 ```markdown
 # Apache2-PHP Installer & IP Viewer
