@@ -25,6 +25,9 @@ A simple shell script set for Ubuntu/Debian to install and uninstall **Apache2 +
 Clone the repository and run the installer:
 
 ```bash
+
+apt update -y
+apt install git -y
 git clone https://github.com/sohag1192/Apache2-PHP.git
 cd Apache2-PHP
 chmod +x install.sh uninstall.sh
