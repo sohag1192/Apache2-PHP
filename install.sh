@@ -1,44 +1,33 @@
-#!/usr/bin/env bash
-# Apache2 + PHP installer and IP viewer deployer
-# Author: Md. Sohag Rana (Sarker Net)
-# Purpose: Install Apache2/PHP and create ip.php to show client/server IPs
+#!/bin/bash
+# Apache2 + PHP Full Installer Script for Ubuntu
+# Author: Md. Sohag Rana (GitHub: Sohag1192)
 
-set -euo pipefail
+set -e
 
-echo "[*] Updating package lists..."
-sudo apt-get update -y
+echo "=== Updating system packages ==="
+sudo apt update && sudo apt upgrade -y
 
-echo "[*] Installing Apache2 and PHP..."
-sudo apt-get install -y apache2 php libapache2-mod-php
-
-echo "[*] Enabling and starting Apache2..."
+echo "=== Installing Apache2 ==="
+sudo apt install apache2 -y
 sudo systemctl enable apache2
+sudo systemctl start apache2
+
+echo "=== Installing PHP with common modules ==="
+sudo apt install php libapache2-mod-php php-cli php-common \
+php-mysql php-curl php-gd php-mbstring php-xml php-zip -y
+
+echo "=== Configuring Apache to allow all files ==="
+APACHE_CONF="/etc/apache2/apache2.conf"
+sudo sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/c\<Directory /var/www/>\n    Options Indexes FollowSymLinks\n    AllowOverride All\n    Require all granted\n</Directory>' $APACHE_CONF
+
+echo "=== Enabling mod_rewrite ==="
+sudo a2enmod rewrite
+
+echo "=== Restarting Apache ==="
 sudo systemctl restart apache2
 
-echo "[*] Deploying ip.php to /var/www/html/"
-sudo tee /var/www/html/ip.php > /dev/null <<'PHP'
-<?php
-function getClientIp(): string {
-    if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-        return trim($ips[0]);
-    }
-    if (!empty($_SERVER['HTTP_X_REAL_IP'])) {
-        return $_SERVER['HTTP_X_REAL_IP'];
-    }
-    return $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-}
+echo "=== Creating PHP test file ==="
+echo "<?php phpinfo(); ?>" | sudo tee /var/www/html/info.php > /dev/null
 
-$clientIp   = getClientIp();
-$remoteAddr = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-$serverIp   = $_SERVER['SERVER_ADDR'] ?? 'unknown';
-
-header('Content-Type: text/plain');
-echo "Client IP (best guess): $clientIp\n";
-echo "Remote addr (Apache sees): $remoteAddr\n";
-echo "Server IP: $serverIp\n";
-echo "Forwarded for: " . ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? 'n/a') . "\n";
-echo "Real IP header: " . ($_SERVER['HTTP_X_REAL_IP'] ?? 'n/a') . "\n";
-PHP
-
-echo "[*] Done! Test it with: curl http://<your-server-ip>/ip.php"
+echo "=== Installation complete! ==="
+echo "Open http://your_server_ip/info.php to verify PHP integration."
