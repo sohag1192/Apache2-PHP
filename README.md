@@ -1,6 +1,6 @@
 
 ---
-
+![Badge](https://hitscounter.dev/api/hit?url=https%3A%2F%2Fgithub.com%2Fsohag1192%2FApache2-PHP&label=Vistors&icon=suit-heart-fill&color=%23f316c3&message=&style=flat&tz=UTC)
 
 # Apache2-PHP Installer & IP Viewer
 
@@ -129,11 +129,3 @@ chmod +x uninstall.sh
 ./uninstall.sh
 ```
 
----
-
-
-
-
-This README now covers **installation, usage, reverse proxy support, uninstallation, license, maintainer info, and Bangla instructions**.  
-
-👉 I can also add a **diagram (Client ↔ Proxy ↔ Apache ↔ PHP)** or **screenshots of sample output** to make the README visually compelling. Would you like me to include those enhancements?
