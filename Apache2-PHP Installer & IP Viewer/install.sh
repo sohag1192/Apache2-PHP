@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Apache2 + PHP installer and IP viewer deployer
-# Author: Md. Sohag Rana (Sarker Net)
+# Author: Md. Sohag Rana (GitHub: Sohag1192)
 # Purpose: Install Apache2/PHP and create ip.php to show client/server IPs
 
 set -euo pipefail

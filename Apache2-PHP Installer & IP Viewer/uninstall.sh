@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Apache2 + PHP uninstaller for Ubuntu/Debian
-# Author: Md. Sohag Rana (Sarker Net)
+# Author: Md. Sohag Rana (GitHub: Sohag1192)
 # Purpose: Remove Apache2/PHP and clean up ip.php
 
 set -euo pipefail

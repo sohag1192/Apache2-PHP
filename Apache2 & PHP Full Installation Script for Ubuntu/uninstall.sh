@@ -1,6 +1,6 @@
 #!/bin/bash
 # Uninstall Apache2 + PHP Script for Ubuntu
-# Author: Md. Sohag Rana (Sarker Net)
+# Author: Md. Sohag Rana (GitHub: Sohag1192)
 
 set -e
 
