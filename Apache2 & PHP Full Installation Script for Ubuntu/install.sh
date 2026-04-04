@@ -1,33 +1,39 @@
 #!/bin/bash
 # Apache2 + PHP Full Installation Script for Ubuntu
-# Author: Md. Sohag Rana (GitHub: Sohag1192)
+# Tested on Ubuntu 20.04/22.04
 
-set -e
+# Update system packages
+sudo apt update -y
+sudo apt upgrade -y
 
-echo "Updating system packages..."
-sudo apt update && sudo apt upgrade -y
-
-echo "Installing Apache2..."
+# Install Apache2
 sudo apt install apache2 -y
+
+# Enable Apache2 service
 sudo systemctl enable apache2
 sudo systemctl start apache2
 
-echo "Installing PHP with common modules..."
-sudo apt install php libapache2-mod-php php-cli php-common \
-php-mysql php-curl php-gd php-mbstring php-xml php-zip -y
+# Install PHP and common extensions
+sudo apt install php libapache2-mod-php php-cli php-mysql php-curl php-gd php-mbstring php-xml php-zip -y
 
-echo "Configuring Apache to allow all files..."
-APACHE_CONF="/etc/apache2/apache2.conf"
-sudo sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/c\<Directory /var/www/>\n    Options Indexes FollowSymLinks\n    AllowOverride All\n    Require all granted\n</Directory>' $APACHE_CONF
+# Configure Apache to prioritize PHP files
+sudo sed -i 's/DirectoryIndex index.html/DirectoryIndex index.php index.html/' /etc/apache2/mods-enabled/dir.conf
 
-echo "Enabling mod_rewrite..."
+# Allow .htaccess overrides
+sudo sed -i 's/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
+
+# Enable Apache rewrite module
 sudo a2enmod rewrite
 
-echo "Restarting Apache..."
+# Restart Apache to apply changes
 sudo systemctl restart apache2
 
-echo "Creating PHP test file..."
-echo "<?php phpinfo(); ?>" | sudo tee /var/www/html/info.php > /dev/null
+# Set permissions for web root
+sudo chown -R $USER:www-data /var/www/html
+sudo chmod -R 755 /var/www/html
 
-echo "Installation complete!"
-echo "Visit http://your_server_ip/info.php to verify PHP integration."
+# Create a PHP test file
+echo "<?php phpinfo(); ?>" | sudo tee /var/www/html/info.php
+
+echo "✅ Apache2 + PHP installation complete!"
+echo "Visit http://localhost/info.php to verify PHP is working."
