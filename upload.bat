@@ -5,7 +5,7 @@ REM  Author    : sohag1192
 REM  Date      : %date% %time%
 REM ============================================
 
-cd /d "C:\Users\sohag\Downloads\GitHub_Upload\Apache2-PHP"
+cd /d "D:\My_Project\Apache2 & Nginx & PHP"
 
 IF NOT EXIST ".git" (
     echo Initializing new Git repository...

@@ -16,11 +16,7 @@ sudo apt-get remove --purge -y apache2 php libapache2-mod-php
 sudo apt-get autoremove -y
 sudo apt-get clean
 
-echo "[*] Cleaning up ip.php..."
-sudo rm -f /var/www/html/ip.php
-
 echo "[*] Removing Apache2 configuration directories..."
 sudo rm -rf /etc/apache2
-sudo rm -rf /var/www/html
 
 echo "[*] Done. Apache2 and PHP have been uninstalled."
