@@ -1,20 +1,20 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Nginx + PHP installer for Ubuntu/Debian
 
-# Exit immediately if a command exits with a non-zero status
-set -e
+set -euo pipefail
 
-echo "Updating package lists..."
-sudo apt update -y
+echo "[*] Updating package lists..."
+sudo apt-get update -y
 
-echo "Installing Nginx and a full suite of PHP extensions..."
-sudo apt install -y nginx php-fpm php-mysql php-cli php-curl php-gd php-mbstring php-xml php-zip php-intl php-bcmath php-soap
+echo "[*] Installing Nginx and PHP extensions..."
+sudo apt-get install -y nginx php-fpm php-mysql php-cli php-curl php-gd php-mbstring php-xml php-zip php-intl php-bcmath php-soap
 
-# Detect the installed PHP version 
+# Detect the installed PHP version
 PHP_VERSION=$(php -v | head -n 1 | awk '{print $2}' | cut -d. -f1,2)
-echo "Detected PHP Version: $PHP_VERSION"
+echo "[*] Detected PHP Version: $PHP_VERSION"
 
-echo "Configuring Nginx default server block for PHP processing..."
-# This overwrites the default Nginx config with a working PHP configuration
+echo "[*] Configuring Nginx default server block..."
+# Using standard spaces for Nginx compatibility
 sudo tee /etc/nginx/sites-available/default > /dev/null <<EOF
 server {
     listen 80 default_server;
@@ -44,17 +44,20 @@ server {
 }
 EOF
 
-echo "Testing Nginx configuration..."
+echo "[*] Testing Nginx configuration..."
 sudo nginx -t
 
-echo "Enabling and restarting services..."
+echo "[*] Configuring firewall (UFW)..."
+sudo ufw allow 'Nginx Full' || true
+
+echo "[*] Enabling and restarting services..."
 sudo systemctl enable nginx
 sudo systemctl restart nginx
 
-sudo systemctl enable php$PHP_VERSION-fpm
-sudo systemctl restart php$PHP_VERSION-fpm
+sudo systemctl enable "php${PHP_VERSION}-fpm"
+sudo systemctl restart "php${PHP_VERSION}-fpm"
 
-echo "Creating info.php test file..."
+echo "[*] Creating info.php test file..."
 echo "<?php phpinfo(); ?>" | sudo tee /var/www/html/info.php > /dev/null
 sudo chown -R www-data:www-data /var/www/html/
 
