@@ -1,44 +1,40 @@
 #!/usr/bin/env bash
-# Apache2 + PHP installer and IP viewer deployer
+# Apache2 + PHP install for Ubuntu/Debian
 # Author: Md. Sohag Rana (GitHub: Sohag1192)
-# Purpose: Install Apache2/PHP and create ip.php to show client/server IPs
 
-set -euo pipefail
+# Check for root privileges
+if [ "$EUID" -ne 0 ]; then
+  echo "Please run this script as root (use: sudo bash setup.sh)"
+  exit 1
+fi
 
-echo "[*] Updating package lists..."
-sudo apt-get update -y
+echo "--- Updating package lists ---"
+apt-get update -y
 
-echo "[*] Installing Apache2 and PHP..."
-sudo apt-get install -y apache2 php libapache2-mod-php
+echo "--- Installing Apache2 ---"
+apt-get install apache2 -y
 
-echo "[*] Enabling and starting Apache2..."
-sudo systemctl enable apache2
-sudo systemctl restart apache2
+echo "--- Installing PHP and common extensions ---"
+apt-get install php libapache2-mod-php php-mysql php-curl php-gd php-mbstring php-xml php-zip -y
 
-echo "[*] Deploying ip.php to /var/www/html/"
-sudo tee /var/www/html/ip.php > /dev/null <<'PHP'
-<?php
-function getClientIp(): string {
-    if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-        return trim($ips[0]);
-    }
-    if (!empty($_SERVER['HTTP_X_REAL_IP'])) {
-        return $_SERVER['HTTP_X_REAL_IP'];
-    }
-    return $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-}
+echo "--- Enabling Apache mod_rewrite ---"
+a2enmod rewrite
 
-$clientIp   = getClientIp();
-$remoteAddr = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-$serverIp   = $_SERVER['SERVER_ADDR'] ?? 'unknown';
+echo "--- Configuring 000-default.conf ---"
+# Injects the Directory block to allow .htaccess overrides
+sed -i 's|<\/VirtualHost>|\t<Directory /var/www/html>\n\t\tOptions Indexes FollowSymLinks\n\t\tAllowOverride All\n\t\tRequire all granted\n\t</Directory>\n</VirtualHost>|' /etc/apache2/sites-available/000-default.conf
 
-header('Content-Type: text/plain');
-echo "Client IP (best guess): $clientIp\n";
-echo "Remote addr (Apache sees): $remoteAddr\n";
-echo "Server IP: $serverIp\n";
-echo "Forwarded for: " . ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? 'n/a') . "\n";
-echo "Real IP header: " . ($_SERVER['HTTP_X_REAL_IP'] ?? 'n/a') . "\n";
-PHP
+echo "--- Setting secure ownership and permissions ---"
+# Make the Apache user the owner of the web directory
+chown -R www-data:www-data /var/www/html
 
-echo "[*] Done! Test it with: curl http://<your-server-ip>/ip.php"
+# Set directories to 755 (Owner can write, others can read/execute)
+find /var/www/html -type d -exec chmod 755 {} \;
+
+# Set files to 644 (Owner can write, others can read)
+find /var/www/html -type f -exec chmod 644 {} \;
+
+echo "--- Restarting Apache to apply all changes ---"
+systemctl restart apache2
+
+echo "--- Setup Complete! ---"
