@@ -1,33 +1,40 @@
-#!/bin/bash
-# Apache2 + PHP Full Installer Script for Ubuntu
+#!/usr/bin/env bash
+# Apache2 + PHP install for Ubuntu/Debian
 # Author: Md. Sohag Rana (GitHub: Sohag1192)
 
-set -e
+# Check for root privileges
+if [ "$EUID" -ne 0 ]; then
+  echo "Please run this script as root (use: sudo bash setup.sh)"
+  exit 1
+fi
 
-echo "=== Updating system packages ==="
-sudo apt update && sudo apt upgrade -y
+echo "--- Updating package lists ---"
+apt-get update -y
 
-echo "=== Installing Apache2 ==="
-sudo apt install apache2 -y
-sudo systemctl enable apache2
-sudo systemctl start apache2
+echo "--- Installing Apache2 ---"
+apt-get install apache2 -y
 
-echo "=== Installing PHP with common modules ==="
-sudo apt install php libapache2-mod-php php-cli php-common \
-php-mysql php-curl php-gd php-mbstring php-xml php-zip -y
+echo "--- Installing PHP and common extensions ---"
+apt-get install php libapache2-mod-php php-mysql php-curl php-gd php-mbstring php-xml php-zip -y
 
-echo "=== Configuring Apache to allow all files ==="
-APACHE_CONF="/etc/apache2/apache2.conf"
-sudo sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/c\<Directory /var/www/>\n    Options Indexes FollowSymLinks\n    AllowOverride All\n    Require all granted\n</Directory>' $APACHE_CONF
+echo "--- Enabling Apache mod_rewrite ---"
+a2enmod rewrite
 
-echo "=== Enabling mod_rewrite ==="
-sudo a2enmod rewrite
+echo "--- Configuring 000-default.conf ---"
+# Injects the Directory block to allow .htaccess overrides
+sed -i 's|<\/VirtualHost>|\t<Directory /var/www/html>\n\t\tOptions Indexes FollowSymLinks\n\t\tAllowOverride All\n\t\tRequire all granted\n\t</Directory>\n</VirtualHost>|' /etc/apache2/sites-available/000-default.conf
 
-echo "=== Restarting Apache ==="
-sudo systemctl restart apache2
+echo "--- Setting secure ownership and permissions ---"
+# Make the Apache user the owner of the web directory
+chown -R www-data:www-data /var/www/html
 
-echo "=== Creating PHP test file ==="
-echo "<?php phpinfo(); ?>" | sudo tee /var/www/html/info.php > /dev/null
+# Set directories to 755 (Owner can write, others can read/execute)
+find /var/www/html -type d -exec chmod 755 {} \;
 
-echo "=== Installation complete! ==="
-echo "Open http://your_server_ip/info.php to verify PHP integration."
+# Set files to 644 (Owner can write, others can read)
+find /var/www/html -type f -exec chmod 644 {} \;
+
+echo "--- Restarting Apache to apply all changes ---"
+systemctl restart apache2
+
+echo "--- Setup Complete! ---"
